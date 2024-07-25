@@ -88,11 +88,6 @@ fun PizzaBox(
 
         }
     )
-    val boxRotation by animateFloatAsState(
-        targetValue = if (!isClosed.value) 0f else 90f,
-        animationSpec = spring(dampingRatio = 0.5f, stiffness = 50f),
-        label = ""
-    )
 
     val rotation = animateFloatAsState(
         targetValue = if (isClosed.value) 0f else 26F,
@@ -107,12 +102,6 @@ fun PizzaBox(
         }
 
     }
-    val scale by animateFloatAsState(
-        targetValue = if (!isClosed.value) 1f else 0.8f,
-        animationSpec = tween(durationMillis = 500),
-        label = ""
-    )
-
     AnimatedVisibility(modifier = modifier.onGloballyPositioned {
         isGloballyPositionned.value = true
 

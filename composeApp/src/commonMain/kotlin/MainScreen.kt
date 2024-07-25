@@ -211,7 +211,7 @@ private fun MainContent(
                 Container(Modifier.size(containerSize.value))
             }
             PizzaBox(
-                modifier = Modifier.align(Alignment.TopCenter),
+                modifier = Modifier.padding(bottom = 300.dp).align(Alignment.TopCenter),
                 isVisible = isBoxVisible,
                 pizzaImage = currentPizza.value.image,
                 isClosed = isBoxClosed
@@ -273,7 +273,7 @@ private fun MainContent(
             AnimatedEdge(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .size(containerSize.value *1.25f)
+                    .size(containerSize.value * 1.25f)
                     .clip(CircleShape)
                     .rotate(rotation.value),
                 isPizzaSelected = isPizzaSelected
@@ -282,9 +282,9 @@ private fun MainContent(
             if (!isPizzaSelected.value) {
                 PizzaPager(
                     Modifier
+                        .padding(start = getPagerStartPadding(), top = getPagerTopPadding())
                         .wrapContentHeight()
                         .fillMaxWidth()
-                        .padding(start = 12.dp, top = 30.dp)
                         .align(Alignment.TopCenter),
                     pizzas = viewModel.pizzas,
                     pizzaSize = pizzaSize,
@@ -307,7 +307,7 @@ private fun MainContent(
 
             PizzaDetails(
                 modifier = Modifier
-                    .padding(bottom = if(isPizzaSelected.value) 205.dp else 80.dp)
+                    .padding(bottom = if (isPizzaSelected.value) 205.dp else 80.dp)
                     .align(Alignment.BottomCenter),
                 isPizzaSelected = isPizzaSelected,
                 pizza = currentPizza
@@ -334,6 +334,21 @@ private fun MainContent(
                     .align(Alignment.BottomCenter)
             )
         }
+    }
+}
+
+fun getPagerStartPadding(): Dp {
+    println("jdjd::" + getPlatform().name.lowercase())
+    return when {
+        getPlatform().name.lowercase().contains("android") -> 10.dp
+        else -> 0.dp
+    }
+}
+
+fun getPagerTopPadding(): Dp {
+    return when {
+        getPlatform().name.lowercase().contains("android") -> 30.dp
+        else -> 28.dp
     }
 }
 
@@ -413,13 +428,14 @@ private fun CartIcon(modifier: Modifier, itemCount: MutableState<Int>) {
         if (itemCount.value > 0)
             Box(
                 Modifier
-                    .size(20.dp)
+                    .size(22.dp)
                     .background(Color.Red, shape = CircleShape)
                     .align(Alignment.TopEnd)
             ) {
+
                 Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    fontSize = 10.sp,
+                    modifier = Modifier.padding(bottom = if(getPlatform().name.lowercase().contains("ios")) 5.dp else 0.dp).align(Alignment.TopCenter),
+                    fontSize = 13.sp,
                     color = Color.White,
                     text = itemCount.value.toString()
                 )
