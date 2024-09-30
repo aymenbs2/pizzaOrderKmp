@@ -3,201 +3,136 @@ package ui.core
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-
-
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onGloballyPositioned
-
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import pizzaoderkmp.composeapp.generated.resources.Res
 import pizzaoderkmp.composeapp.generated.resources.base3
-import pizzaoderkmp.composeapp.generated.resources.closed
 import pizzaoderkmp.composeapp.generated.resources.lid3
-import pizzaoderkmp.composeapp.generated.resources.opened
 
+// Constants for animation and size values
+private const val ANIMATION_DURATION = 2000
+private const val OFFSET_DELAY = 90
+private val BASE_SIZE = 300.dp
+private val CLOSED_BOX_SPACER = 250.dp
+private val OPENED_BOX_SIZE = 230.dp
+private val OPENED_BOX_OFFSET = 150.dp
 
 @Composable
 fun PizzaBox(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    isBoxOpenedToClosed: Boolean,
+    isBoxHiddenToVisible: Boolean,
     pizzaImage: DrawableResource,
-    isVisible: MutableState<Boolean>,
-    isClosed: MutableState<Boolean>,
-    onAnimationFinish: () -> Unit
+    onBoxDisappear: () -> Unit
 ) {
-    val duration = 2000
-    val isGloballyPositionned = remember {
-        mutableStateOf(false)
-    }
-
+    // Define animations for the pizza box elements
     val spacer = animateDpAsState(
-        targetValue = if (isClosed.value) 0.dp else 250.dp,
-        label = "",
-        animationSpec = tween(duration),
+        targetValue = if (isBoxOpenedToClosed) 0.dp else CLOSED_BOX_SPACER,
+        animationSpec = tween(ANIMATION_DURATION)
     )
-
-
     val size = animateDpAsState(
-        targetValue = if (isClosed.value) 0.dp else 230.dp,
-        label = "",
-        animationSpec = tween(duration)
+        targetValue = if (isBoxOpenedToClosed) 0.dp else OPENED_BOX_SIZE,
+        animationSpec = tween(ANIMATION_DURATION)
     )
+
     val offset = animateDpAsState(
-        targetValue = if (isClosed.value) 150.dp else 0.dp,
-        label = "",
-        animationSpec = tween(duration, delayMillis = 90),
-
-        )
+        targetValue = if (isBoxOpenedToClosed) OPENED_BOX_OFFSET else 0.dp,
+        animationSpec = tween(ANIMATION_DURATION, delayMillis = OFFSET_DELAY)
+    )
     val pizzaScale = animateFloatAsState(
-        targetValue = if (isClosed.value && isVisible.value) 0f else 1f,
-        label = "",
-        animationSpec = tween(duration, delayMillis = 90),
-        finishedListener = {
-            if (it == 0f) {
-                onAnimationFinish()
-            }
-
-            isClosed.value = false
-            isVisible.value = false
-
-        }
+        targetValue = if (isBoxOpenedToClosed && isBoxHiddenToVisible) 0f else 1f,
+        animationSpec = tween(ANIMATION_DURATION, delayMillis = OFFSET_DELAY),
     )
-
     val rotation = animateFloatAsState(
-        targetValue = if (isClosed.value) 0f else 26F,
-        label = "",
-        animationSpec = tween(duration),
+        targetValue = if (isBoxOpenedToClosed) 0f else 26f,
+        animationSpec = tween(ANIMATION_DURATION)
     )
-    LaunchedEffect(isGloballyPositionned.value) {
-
-        delay(1000)
-        if (isGloballyPositionned.value){
-            isClosed.value = true
+    LaunchedEffect(
+        pizzaScale.value,
+        size.value,
+        pizzaScale.value,
+        rotation.value,
+        offset.value,
+        spacer.value
+    ) {
+        if (pizzaScale.value == 0f && size.value == 0.dp && pizzaScale.value == 0f) {
+            onBoxDisappear()
         }
-
     }
-    AnimatedVisibility(modifier = modifier.onGloballyPositioned {
-        isGloballyPositionned.value = true
-
-    }, enter = fadeIn(), exit = fadeOut(), visible = isVisible.value) {
-
-
+    // Animated visibility based on whether the box is visible
+    AnimatedVisibility(
+        modifier = modifier,
+        visible = isBoxHiddenToVisible,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
         Box(
             modifier = Modifier
                 .alpha(pizzaScale.value)
                 .offset(x = offset.value, y = -offset.value)
-                .fillMaxSize()
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            // Pizza box base
-            Image(
-                painter = painterResource(Res.drawable.base3),
-                contentDescription = "Pizza Box Base",
-                modifier = Modifier
-                    .padding(top = spacer.value / 2)
-                    .size(300.dp)
-                    .graphicsLayer {
-                        rotationX = rotation.value
-                    }
-                    .scale(pizzaScale.value)
-                    .align(Alignment.Center)
-            )
-            Image(
-                painter = painterResource(pizzaImage),
-                contentDescription = "Pizza ",
-                modifier = Modifier
-                    .padding(top = spacer.value / 2)
-                    .scale(pizzaScale.value)
-                    .size(size.value)
-                    .align(Alignment.Center)
-            )
-            Image(
-                painter = painterResource( Res.drawable.lid3),
-                contentDescription = "Pizza Box Lid",
-                modifier = Modifier
-                    .graphicsLayer {
-                        rotationX = rotation.value
-                    }
-                    .scale(pizzaScale.value)
-                    .padding(bottom = spacer.value / 2)
-                    .size(300.dp)
-                    .align(Alignment.Center)
-
-            )
+            PizzaBoxBase(spacer, rotation, pizzaScale)
+            PizzaImage(pizzaImage, spacer, pizzaScale, size)
+            PizzaBoxLid(spacer, rotation, pizzaScale)
         }
     }
 }
 
+@Composable
+private fun PizzaBoxBase(spacer: State<Dp>, rotation: State<Float>, pizzaScale: State<Float>) {
+    Image(
+        painter = painterResource(Res.drawable.base3),
+        contentDescription = "Pizza Box Base",
+        modifier = Modifier
+            .padding(top = spacer.value / 2)
+            .size(BASE_SIZE)
+            .graphicsLayer { rotationX = rotation.value }
+            .scale(pizzaScale.value)
+    )
+}
 
 @Composable
-fun PizzaBoxAnimation() {
-    var isOpen by remember { mutableStateOf(false) }
-    val rotation by animateFloatAsState(
-        targetValue = if (isOpen) 0f else 90f,
-        animationSpec = spring(dampingRatio = 0.5f, stiffness = 50f)
-    )
-    val scale by animateFloatAsState(
-        targetValue = if (isOpen) 1f else 0.8f,
-        animationSpec = tween(durationMillis = 500)
-    )
-    val pizzaOffsetY by animateFloatAsState(
-        targetValue = if (isOpen) 0f else -100f,
-        animationSpec = tween(durationMillis = 500)
-    )
-
-    Box(
+private fun PizzaImage(
+    pizzaImage: DrawableResource,
+    spacer: State<Dp>,
+    pizzaScale: State<Float>,
+    size: State<Dp>
+) {
+    Image(
+        painter = painterResource(pizzaImage),
+        contentDescription = "Pizza",
         modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            modifier = Modifier
-                .size(300.dp)
-                .graphicsLayer {
-                    rotationZ = rotation
-                    scaleX = scale
-                    scaleY = scale
-                }
-        ) {
-            Image(
-                painter = painterResource( if (isOpen) Res.drawable.opened else Res.drawable.closed),
-                contentDescription = if (isOpen) "Boîte de pizza ouverte" else "Boîte de pizza fermée",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+            .padding(top = spacer.value / 2)
+            .scale(pizzaScale.value)
+            .size(size.value)
+    )
+}
 
-        Button(
-            onClick = { isOpen = !isOpen },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        ) {
-            Text(text = if (isOpen) "Fermer la boîte" else "Ouvrir la boîte")
-        }
-    }
+@Composable
+private fun PizzaBoxLid(spacer: State<Dp>, rotation: State<Float>, pizzaScale: State<Float>) {
+    Image(
+        painter = painterResource(Res.drawable.lid3),
+        contentDescription = "Pizza Box Lid",
+        modifier = Modifier
+            .graphicsLayer { rotationX = rotation.value }
+            .scale(pizzaScale.value)
+            .padding(bottom = spacer.value / 2)
+            .size(BASE_SIZE)
+    )
 }

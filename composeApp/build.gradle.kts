@@ -16,7 +16,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -27,9 +27,21 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        
+        val commonTest by getting {
+            dependencies {
+
+                implementation(libs.kotlin.test)
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.uiTest)
+                implementation(libs.kotlinx.coroutines.test.v164)
+
+// JUnit for unit testing
+                implementation(libs.junit)
+            }
+        }
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -42,6 +54,8 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.constraintlayout.compose.multiplatform)
+            implementation(libs.lifecycle.viewmodel.compose)
+
 
         }
     }
@@ -81,5 +95,12 @@ android {
     dependencies {
         debugImplementation(compose.uiTooling)
     }
+}
+dependencies {
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.kotlinx.coroutines.test.v164)
+
+// JUnit for unit testing
+    testImplementation(libs.junit)
 }
 

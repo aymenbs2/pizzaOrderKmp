@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -23,8 +23,8 @@ import kotlin.math.roundToInt
 @Composable
 fun DraggableBox(
     modifier: Modifier,
-    targetLayoutCoordinates: MutableState<Any>,
-    enableDrag:MutableState<Boolean>,
+    targetLayoutCoordinates: State<Any>,
+    enableDrag:Boolean,
     onDragged: () -> Unit,
     content: @Composable BoxScope.() -> Unit
 ) {
@@ -40,6 +40,7 @@ fun DraggableBox(
                 )
             }
             .onGloballyPositioned {
+
                 if ((targetLayoutCoordinates.value as LayoutCoordinates)
                         .boundsInWindow()
                         .contains(it.positionInWindow())
@@ -61,7 +62,7 @@ fun DraggableBox(
                         offsetY = 0f
                     }
                 ) { change, dragAmount ->
-                    if(enableDrag.value){
+                    if(enableDrag){
                         offsetX += dragAmount.x
                         offsetY += dragAmount.y
                     }
