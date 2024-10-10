@@ -1,5 +1,8 @@
-Introduction
-  
+
+
+## Pizza Order KMP App 
+
+  The Pizza Order KMP App is a cross-platform mobile application built using Kotlin Multiplatform (KMP), which allows users to browse, customize, and order their favorite pizzas. The app leverages the power of KMP to share core business logic across multiple platforms (Android, iOS), while providing a native UI experience on each platform.
   
   ## Technologies
 - Android Studio,Kotlin Multiplatform ,Kotlin,MVVM,Jetpack Compose
@@ -7,8 +10,7 @@ Introduction
 
   ## Demo
 
-
-https://github.com/user-attachments/assets/7747e81d-8244-4456-ad0a-0ca37af2b3b8
+https://github.com/user-attachments/assets/ae5cb728-0a0c-47ce-9f39-1406d2572043
 
   ## Build Project 
   -Clone the repo
