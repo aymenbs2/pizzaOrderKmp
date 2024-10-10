@@ -23,11 +23,13 @@ import kotlin.math.roundToInt
 @Composable
 fun DraggableBox(
     modifier: Modifier,
-    targetLayoutCoordinates: State<Any>,
-    enableDrag:Boolean,
+    targetLayoutCoordinates: LayoutCoordinates?,
+    enableDrag: Boolean,
     onDragged: () -> Unit,
     content: @Composable BoxScope.() -> Unit
 ) {
+    if (targetLayoutCoordinates == null)
+        return
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
     Box(
@@ -41,7 +43,7 @@ fun DraggableBox(
             }
             .onGloballyPositioned {
 
-                if ((targetLayoutCoordinates.value as LayoutCoordinates)
+                if ((targetLayoutCoordinates as LayoutCoordinates)
                         .boundsInWindow()
                         .contains(it.positionInWindow())
                 ) {
@@ -62,7 +64,7 @@ fun DraggableBox(
                         offsetY = 0f
                     }
                 ) { change, dragAmount ->
-                    if(enableDrag){
+                    if (enableDrag) {
                         offsetX += dragAmount.x
                         offsetY += dragAmount.y
                     }

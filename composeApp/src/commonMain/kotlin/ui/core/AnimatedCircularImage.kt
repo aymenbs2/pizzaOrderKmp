@@ -20,6 +20,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import pizzaoderkmp.composeapp.generated.resources.Res
+import pizzaoderkmp.composeapp.generated.resources.champinion
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -27,20 +29,26 @@ import kotlin.math.sin
 @Composable
 fun AnimatedCircularImages(
     modifier: Modifier,
-    img: DrawableResource,
+    img: DrawableResource=Res.drawable.champinion,
+    images: List<DrawableResource> = emptyList(),
     center: Offset = Offset(0f, 0f),
     numberOfImages: Int = 6,
-    radius: Int = 50
+    isAnimated: Boolean = true,
+    isSingleImage: Boolean = true,
+    radius: Float = 50f
 ) {
     val isPositioned = remember {
         mutableStateOf(false)
     }
-
-    val animatedRadius = animateFloatAsState(
-        targetValue = if (isPositioned.value) radius.toFloat() else 90f,
-        label = "",
-        animationSpec = spring(Spring.DampingRatioHighBouncy)
-    )
+    val animatedRadius =
+        if (!isAnimated)
+            mutableStateOf(radius)
+        else
+            animateFloatAsState(
+                targetValue = if (isPositioned.value) radius else radius + 40F,
+                label = "",
+                animationSpec = spring(Spring.DampingRatioHighBouncy)
+            )
 
     Box(
         contentAlignment = Alignment.Center,
@@ -67,7 +75,7 @@ fun AnimatedCircularImages(
                     }
             ) {
                 Image(
-                    painter = painterResource(img),
+                    painter = painterResource(if (isSingleImage) img else images[i]),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Inside

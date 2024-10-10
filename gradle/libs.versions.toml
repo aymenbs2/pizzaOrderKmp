@@ -21,10 +21,17 @@ kotlin = "2.0.0"
 kotlinxCoroutinesTest = "1.8.0"
 kotlinxCoroutinesTestVersion = "1.6.4"
 lifecycleViewmodelCompose = "2.8.0"
+uiTestJunit4Android = "version"
+uiTestManifest = "1.7.3"
+uiTestManifestVersion = "version"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTestingVersion" }
+androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "uiTestManifest" }
+androidx-ui-test-junit4-android-vversion = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
+androidx-ui-test-manifest-vversion = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
 constraintlayout-compose-multiplatform = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
 core-testing = { module = "android.arch.core:core-testing", version.ref = "coreTesting" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }

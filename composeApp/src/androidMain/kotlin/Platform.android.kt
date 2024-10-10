@@ -9,6 +9,7 @@ class AndroidPlatform : Platform {
 actual fun getPlatform(): Platform = AndroidPlatform()
 
 
-actual fun getPagerTopPadding(): Dp = 22.4.dp
-
-actual fun getPagerStartPadding(): Dp = 4.dp
+actual val PIZZA_PAGER_HORIZONTAL_PADDING =80.dp
+actual val PIZZA_ANIM_EDGE_SIZE_COEF =1.6f
+actual val PIZZA_PLATE_PADDING = 55
+actual val PIZZA_PAGER_PADDING = 15

@@ -5,5 +5,10 @@ interface Platform {
 }
 
 expect fun getPlatform(): Platform
-expect fun getPagerTopPadding(): Dp
-expect fun getPagerStartPadding(): Dp
+
+expect val PIZZA_PAGER_HORIZONTAL_PADDING: Dp
+
+expect val PIZZA_ANIM_EDGE_SIZE_COEF: Float
+
+expect val PIZZA_PLATE_PADDING: Int
+expect val PIZZA_PAGER_PADDING: Int
