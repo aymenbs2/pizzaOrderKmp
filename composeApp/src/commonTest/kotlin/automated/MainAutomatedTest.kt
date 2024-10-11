@@ -2,8 +2,8 @@ package automated
 
 import androidx.compose.ui.test.*
 import automated.pages.MainScreenPage
-import ui.mainScreen.view.MainScreen
-import unitTest.viewModel.MainScreenViewModel
+import main.ui.mainScreen.view.MainScreen
+import main.ui.viewModel.MainScreenViewModel
 import kotlin.test.Test
 
 class MainAutomatedTest {

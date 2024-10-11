@@ -1,4 +1,4 @@
-package ui.mainScreen.view
+package main.ui.mainScreen.view
 
 import PIZZA_ANIM_EDGE_SIZE_COEF
 import PIZZA_PAGER_HORIZONTAL_PADDING
@@ -80,7 +80,7 @@ import com.aymendev.pizzaorder.data.PizzaSupplement
 import com.aymendev.pizzaorder.ui.utils.PagerUtils
 import com.aymendev.pizzaorder.ui.utils.PagerUtils.calculatePageOffset
 import com.aymendev.pizzaorder.ui.utils.PagerUtils.getPizzaItemRotationValue
-import data.MockPizzaData
+import main.data.MockPizzaData
 import org.jetbrains.compose.resources.painterResource
 import pizzaoderkmp.composeapp.generated.resources.Res
 import pizzaoderkmp.composeapp.generated.resources.capres
@@ -88,22 +88,22 @@ import pizzaoderkmp.composeapp.generated.resources.champinion
 import pizzaoderkmp.composeapp.generated.resources.gree_olive_leaf
 import pizzaoderkmp.composeapp.generated.resources.half_tomato
 import pizzaoderkmp.composeapp.generated.resources.plate
-import ui.core.AnimatedCircularImages
+import main.ui.core.AnimatedCircularImages
 
-import ui.core.DraggableBox
-import ui.core.PizzaBox
-import ui.mainScreen.MainScreenUiState
-import ui.mainScreen.PizzaPagerListener
-import ui.shared.BackPressHandler
-import ui.shared.SharedBackPressHandler
-import ui.theme.Orange40
-import ui.theme.Orange60
-import ui.theme.Pink40
-import ui.theme.Yellow40
-import ui.theme.Yellow50
-import ui.theme.Yellow60
-import ui.theme.Yellow70
-import unitTest.viewModel.MainScreenViewModel
+import main.ui.core.DraggableBox
+import main.ui.core.PizzaBox
+import main.ui.mainScreen.MainScreenUiState
+import main.ui.mainScreen.PizzaPagerListener
+import main.ui.shared.BackPressHandler
+import main.ui.shared.SharedBackPressHandler
+import main.ui.theme.Orange40
+import main.ui.theme.Orange60
+import main.ui.theme.Pink40
+import main.ui.theme.Yellow40
+import main.ui.theme.Yellow50
+import main.ui.theme.Yellow60
+import main.ui.theme.Yellow70
+import main.ui.viewModel.MainScreenViewModel
 
 enum class MainScreenTestTags {
     PAGER,

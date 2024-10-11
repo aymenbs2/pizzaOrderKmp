@@ -1,7 +1,6 @@
-package ui.mainScreen
+package main.ui.mainScreen
 
 import androidx.compose.runtime.State
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.unit.Dp
 import com.aymendev.pizzaorder.data.Pizza
 import com.aymendev.pizzaorder.data.PizzaSupplement

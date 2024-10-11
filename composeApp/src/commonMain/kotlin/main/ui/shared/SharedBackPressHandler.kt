@@ -1,4 +1,4 @@
-package ui.shared
+package main.ui.shared
 
 
 interface BackPressHandler {

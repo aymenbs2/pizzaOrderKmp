@@ -1,4 +1,4 @@
-package ui.core
+package main.ui.core
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState

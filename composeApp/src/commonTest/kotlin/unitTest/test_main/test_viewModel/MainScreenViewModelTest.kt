@@ -1,7 +1,9 @@
+package unitTest.ui.viewModel
+
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.dp
 
-import data.MockPizzaData
+import main.data.MockPizzaData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -9,7 +11,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import unitTest.viewModel.MainScreenViewModel
+import main.ui.viewModel.MainScreenViewModel
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

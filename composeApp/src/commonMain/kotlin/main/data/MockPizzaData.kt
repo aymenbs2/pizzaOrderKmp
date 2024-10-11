@@ -1,4 +1,4 @@
-package data
+package main.data
 
 import com.aymendev.pizzaorder.data.Pizza
 import com.aymendev.pizzaorder.data.PizzaSupplement

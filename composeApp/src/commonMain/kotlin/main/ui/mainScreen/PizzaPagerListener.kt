@@ -1,4 +1,4 @@
-package ui.mainScreen
+package main.ui.mainScreen
 
 interface PizzaPagerListener {
    fun onPizzaClicked(index: Int)

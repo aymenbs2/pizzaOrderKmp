@@ -28,10 +28,10 @@ uiTestManifestVersion = "version"
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTestingVersion" }
-androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "uiTestManifest" }
-androidx-ui-test-junit4-android-vversion = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
-androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
-androidx-ui-test-manifest-vversion = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
+androidx-unitTest.main.ui-test-junit4-android = { module = "androidx.compose.unitTest.main.ui:unitTest.main.ui-test-junit4-android", version.ref = "uiTestManifest" }
+androidx-unitTest.main.ui-test-junit4-android-vversion = { module = "androidx.compose.unitTest.main.ui:unitTest.main.ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
+androidx-unitTest.main.ui-test-manifest = { module = "androidx.compose.unitTest.main.ui:unitTest.main.ui-test-manifest", version.ref = "uiTestManifest" }
+androidx-unitTest.main.ui-test-manifest-vversion = { module = "androidx.compose.unitTest.main.ui:unitTest.main.ui-test-manifest", version.ref = "uiTestManifestVersion" }
 constraintlayout-compose-multiplatform = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
 core-testing = { module = "android.arch.core:core-testing", version.ref = "coreTesting" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }

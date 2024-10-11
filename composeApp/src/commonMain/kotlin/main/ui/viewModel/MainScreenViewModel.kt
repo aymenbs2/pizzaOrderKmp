@@ -1,4 +1,4 @@
-package unitTest.viewModel
+package main.ui.viewModel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -10,11 +10,11 @@ import androidx.lifecycle.viewModelScope
 import com.aymendev.pizzaorder.data.PizzaComposition
 import com.aymendev.pizzaorder.data.Pizza
 import com.aymendev.pizzaorder.data.PizzaSupplement
-import data.MockPizzaData
+import main.data.MockPizzaData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import ui.mainScreen.MainScreenUiState
+import main.ui.mainScreen.MainScreenUiState
 
 class MainScreenViewModel : ViewModel() {
 

@@ -1,4 +1,4 @@
-package unitTest.utils
+package unitTest.ui.utils
 
 import com.aymendev.pizzaorder.ui.utils.PagerUtils
 import kotlin.test.Test

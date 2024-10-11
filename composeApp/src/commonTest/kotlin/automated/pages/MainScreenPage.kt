@@ -1,7 +1,5 @@
 package automated.pages
 
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
@@ -12,9 +10,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.waitUntilAtLeastOneExists
-import com.aymendev.pizzaorder.ui.utils.PagerUtils
 
-import ui.mainScreen.view.MainScreenTestTags
+import main.ui.mainScreen.view.MainScreenTestTags
 
 class MainScreenPage @OptIn(ExperimentalTestApi::class) constructor(val uiTest: ComposeUiTest) {
 
