@@ -17,11 +17,23 @@ https://github.com/user-attachments/assets/ae5cb728-0a0c-47ce-9f39-1406d2572043
   -Install Android Studio
   -checkout to the main branch
   -build the project using Android studio
-## Author
 
 ## Run automated test 
+
  ./gradlew :composeApp:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=automated.MainAutomatedTest
-👤 **Aymen ben salah**
+
+
+
+https://github.com/user-attachments/assets/9bb08c2f-0f91-46cb-a0d8-ca46130eec23
+
+
+ 
+## Contribution 
+- Create fork
+- create pull request to develop branch
+- 
+## Author
+ 👤 **Aymen ben salah**
 
 - Twitter: [@AymenBenSalah](https://twitter.com/Aymenbe49803679)
 - Linkedin: [@AymenBenSalah](https://www.linkedin.com/in/aymen-ben-salah-b60b5a153/)
@@ -29,10 +41,6 @@ https://github.com/user-attachments/assets/ae5cb728-0a0c-47ce-9f39-1406d2572043
 ## Show your support
 
 Please ⭐️ this repository if this project helped you!
-
-## Contribution 
-- Create fork
-- create pull request to develop branch
 
 
 ## 📝 License
