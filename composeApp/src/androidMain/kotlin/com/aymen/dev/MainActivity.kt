@@ -16,20 +16,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val pxValue =
-                LocalDensity.current.run { 16.toDp() }
-
-            println("ddd density=${pxValue.value}")
             App()
             BackHandler(enabled =!SharedBackPressHandler.enabled) {
                 SharedBackPressHandler.onBackPressed()
             }
         }
     }
-}
-@Preview
-@Composable
-fun PreviewCustomConstraintLayoutWithConstraintsExample() {
-    CustomConstraintLayoutExample()
 }
 

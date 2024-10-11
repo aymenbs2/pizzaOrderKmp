@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
@@ -48,6 +47,7 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -89,13 +89,9 @@ import pizzaoderkmp.composeapp.generated.resources.gree_olive_leaf
 import pizzaoderkmp.composeapp.generated.resources.half_tomato
 import pizzaoderkmp.composeapp.generated.resources.plate
 import ui.core.AnimatedCircularImages
-import ui.core.ConstraintType
-import ui.core.CustomConstraintLayout
+
 import ui.core.DraggableBox
 import ui.core.PizzaBox
-import ui.core.RefConstraint
-import ui.core.constraintAs
-import ui.core.createRef
 import ui.mainScreen.MainScreenUiState
 import ui.mainScreen.PizzaPagerListener
 import ui.shared.BackPressHandler
@@ -115,6 +111,7 @@ enum class MainScreenTestTags {
     PIZZA_ITEM,
     MAIN_HEADER,
     ADD_TO_CART_BUTTON,
+    PIZZA_COUNT,
     DETAILS_HEADER,
 }
 
@@ -134,7 +131,6 @@ const val ADDITION_INSTRUCTION_TEXT_SIZE = 50
 const val PIZZA_DETAILS_PADDING = ADD_TO_CART_BUTTON_SIZE + ADD_TO_CART_BUTTON_PADDING * 2 +
         PIZZA_ADDITION_ITEM_SIZE + ADDITION_INSTRUCTION_TEXT_PADDING +
         ADDITION_INSTRUCTION_TEXT_SIZE + 20
-
 const val PIZZA_DETAILS_PADDING_ON_PAGER = ADD_TO_CART_BUTTON_SIZE + ADD_TO_CART_BUTTON_PADDING + 20
 
 @Composable
@@ -188,10 +184,12 @@ fun MainScreen(mainScreenViewModel: MainScreenViewModel) {
         }
     }
     Scaffold(topBar = {
-        if (uiState.isPizzaSelected) DetailTopBar(pizzaCartCount) {
+        TopBar(
+            uiState = uiState,
+            pizzaCartCount = pizzaCartCount,
+        ) {
             mainScreenViewModel.setPizzaSelection(false)
         }
-        else MainTopBar(pizzaCartCount)
     }) {
         MainContent(
             mainScreenUiState = uiState,
@@ -222,6 +220,17 @@ fun MainScreen(mainScreenViewModel: MainScreenViewModel) {
 }
 
 @Composable
+private fun TopBar(
+    uiState: MainScreenUiState,
+    pizzaCartCount: MutableIntState,
+    onBackClicked: () -> Unit
+) {
+    if (uiState.isPizzaSelected)
+        DetailTopBar(pizzaCartCount, onBackClicked)
+    else MainTopBar(pizzaCartCount)
+}
+
+@Composable
 private fun MainContent(
     mainScreenUiState: MainScreenUiState,
     pagerListener: PizzaPagerListener,
@@ -237,41 +246,24 @@ private fun MainContent(
         verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PizzaButton(mainScreenUiState.isPizzaSelected, modifier = Modifier)
-
+        PizzaButton(isHidden = mainScreenUiState.isPizzaSelected, modifier = Modifier)
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize(),
         ) {
-            Box(
-                modifier = Modifier
-                    .shadow(
-                        elevation = 0.5.dp, shape = RoundedCornerShape(
-                            mainScreenUiState.cornerRadiusBg.value
-                        )
-                    ).background(
-                        color = Yellow60,
-                        shape = RoundedCornerShape(mainScreenUiState.cornerRadiusBg.value)
-                    )
-                    .fillMaxSize(if (!mainScreenUiState.isPizzaSelected) 0.9f else 1f)
-                    .align(Alignment.TopCenter)
+            RoundBackground(
+                mainScreenUiState = mainScreenUiState,
+                modifier = Modifier.align(Alignment.TopCenter)
             )
             //Plate IMAGE
-            Image(
+            Plate(
+                mainScreenUiState = mainScreenUiState,
                 modifier = Modifier
-                    .padding(top = PIZZA_PLATE_PADDING.dp)
-                    .size(mainScreenUiState.plateSize.value)
-                    .alpha(if (mainScreenUiState.isPizzaBoxVisible) 0f else 1f).shadow(
-                        8.dp,
-                        shape = CircleShape,
-                        ambientColor = Color.Black,
-                        spotColor = Color.Black
-                    ).rotate(mainScreenUiState.selectedRotation.value).onGloballyPositioned {
-                        onPizzaGloballyPositioned(it)
-                    }.align(Alignment.TopCenter),
-                contentScale = ContentScale.Crop,
-                painter = painterResource(Res.drawable.plate),
-                contentDescription = ""
-            )
+                    .align(Alignment.TopCenter)
+
+            ) {
+                onPizzaGloballyPositioned(it)
+            }
             PizzaBox(
                 modifier = Modifier.fillMaxHeight(0.5f).fillMaxWidth().align(Alignment.TopCenter),
                 pizzaImage = mainScreenUiState.currentPizza.image,
@@ -281,36 +273,15 @@ private fun MainContent(
                 onPizzaBoxDisappear()
             }
             if (mainScreenUiState.isPizzaSelected) {
-                if (!mainScreenUiState.isPizzaBoxVisible) {
-                    Image(
-                        modifier = Modifier
-                            .padding(top = PIZZA_PLATE_PADDING.dp)
-                            .size(mainScreenUiState.plateSize.value)
-                            .clip(CircleShape)
-                            .rotate(mainScreenUiState.selectedRotation.value)
-                            .align(Alignment.TopCenter)
-                            .clickable {
-                                onClickOnPizzaFromDetails()
-                            }
-                            .testTag(MainScreenTestTags.DETAILS_PIZZA.name),
-                        painter = painterResource(
-                            mainScreenUiState.currentPizza.image
-                        ), contentScale = ContentScale.Crop, contentDescription = ""
-                    )
-                }
-                if (mainScreenUiState.isDisplaySupplementsAllowed) {
-                    mainScreenUiState.currentSupplements.forEachIndexed { index, supplement ->
-                        AnimatedCircularImages(
-                            modifier = Modifier
-                                .padding(top = PIZZA_PLATE_PADDING.dp)
-                                .size(mainScreenUiState.plateSize.value)
-                                .align(Alignment.TopCenter),
-                            supplement.image,
-                            radius = 40 + index * 20f
-                        )
-                    }
-
-                }
+                DetailsPagePizzaImage(
+                    mainScreenUiState = mainScreenUiState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    onClickOnPizzaFromDetails = onClickOnPizzaFromDetails
+                )
+                Supplements(
+                    mainScreenUiState = mainScreenUiState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
 
                 Additions(
                     uiState = mainScreenUiState,
@@ -325,20 +296,15 @@ private fun MainContent(
                     onSupplementDragged(MockPizzaData.supplements[it])
                 }
             }
+            AnimatedEdge(
+                state = mainScreenUiState,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+            )
 
-
-
-            if (!mainScreenUiState.isPizzaBoxVisible)
-                AnimatedEdge(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .clip(CircleShape)
-                        .rotate(mainScreenUiState.rotation.value)
-                        .size(mainScreenUiState.plateSize.value * PIZZA_ANIM_EDGE_SIZE_COEF),
-                    isPizzaSelected = mainScreenUiState.isPizzaSelected
-                )
-
-            if (!mainScreenUiState.isPizzaSelected && !mainScreenUiState.isPizzaBoxVisible) {
+            if (!mainScreenUiState.isPizzaSelected
+                && !mainScreenUiState.isPizzaBoxVisible
+            ) {
                 PizzaPager(
                     Modifier
                         .padding(start = PIZZA_PAGER_PADDING.dp, top = PIZZA_PLATE_PADDING.dp)
@@ -353,7 +319,6 @@ private fun MainContent(
                     contentHorizontalPadding = PIZZA_PAGER_HORIZONTAL_PADDING
                 )
             }
-
             PizzaDetails(
                 modifier = Modifier
                     .padding(
@@ -365,26 +330,93 @@ private fun MainContent(
                 pizza = mainScreenUiState.currentPizza
             )
             AddToCartButton(
-                modifier = Modifier.size(ADD_TO_CART_BUTTON_SIZE.dp)
-                    .padding(ADD_TO_CART_BUTTON_PADDING.dp)
-                    .shadow(
-                        2.dp,
-                        shape = RoundedCornerShape(20.dp),
-                        ambientColor = Orange40
-                    )
-                    .background(
-                        brush = Brush.verticalGradient(
-                            if (!mainScreenUiState.isPizzaBoxVisible && !mainScreenUiState.isPizzaBoxClosed) listOf(
-                                Yellow40, Orange40
-                            ) else listOf(Yellow60, Orange60)
-                        ), shape = RoundedCornerShape(20.dp)
-                    )
-                    .clickable(enabled = !mainScreenUiState.isPizzaBoxVisible && !mainScreenUiState.isPizzaBoxClosed) {
-                        onAddToCarClicked()
-                    }.align(Alignment.BottomCenter)
+                mainScreenUiState = mainScreenUiState,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onAddToCarClicked
             )
         }
     }
+}
+
+@Composable
+private fun DetailsPagePizzaImage(
+    mainScreenUiState: MainScreenUiState,
+    modifier: Modifier,
+    onClickOnPizzaFromDetails: () -> Unit
+) {
+    if (!mainScreenUiState.isPizzaBoxVisible) {
+        Image(
+            modifier = modifier
+                .padding(top = PIZZA_PLATE_PADDING.dp)
+                .size(mainScreenUiState.plateSize.value)
+                .clip(CircleShape)
+                .rotate(mainScreenUiState.selectedRotation.value)
+                .clickable {
+                    onClickOnPizzaFromDetails()
+                }
+                .testTag(MainScreenTestTags.DETAILS_PIZZA.name),
+            painter = painterResource(
+                mainScreenUiState.currentPizza.image
+            ), contentScale = ContentScale.Crop, contentDescription = ""
+        )
+    }
+}
+
+@Composable
+private fun RoundBackground(mainScreenUiState: MainScreenUiState, modifier: Modifier) {
+    Box(
+        modifier = modifier
+            .shadow(
+                elevation = 0.5.dp, shape = RoundedCornerShape(
+                    mainScreenUiState.cornerRadiusBg.value
+                )
+            ).background(
+                color = Yellow60,
+                shape = RoundedCornerShape(mainScreenUiState.cornerRadiusBg.value)
+            )
+            .fillMaxSize(if (!mainScreenUiState.isPizzaSelected) 0.9f else 1f)
+
+    )
+}
+
+
+@Composable
+private fun Supplements(mainScreenUiState: MainScreenUiState, modifier: Modifier) {
+    if (mainScreenUiState.isDisplaySupplementsAllowed) {
+        mainScreenUiState.currentSupplements.forEachIndexed { index, supplement ->
+            AnimatedCircularImages(
+                modifier = modifier
+                    .padding(top = PIZZA_PLATE_PADDING.dp)
+                    .size(mainScreenUiState.plateSize.value),
+                supplement.image,
+                radius = 40 + index * 20f
+            )
+        }
+    }
+}
+
+@Composable
+private fun Plate(
+    mainScreenUiState: MainScreenUiState,
+    modifier: Modifier,
+    onPizzaGloballyPositioned: (LayoutCoordinates) -> Unit
+) {
+    Image(
+        modifier = modifier
+            .padding(top = PIZZA_PLATE_PADDING.dp)
+            .size(mainScreenUiState.plateSize.value)
+            .alpha(if (mainScreenUiState.isPizzaBoxVisible) 0f else 1f).shadow(
+                8.dp,
+                shape = CircleShape,
+                ambientColor = Color.Black,
+                spotColor = Color.Black
+            ).rotate(mainScreenUiState.selectedRotation.value).onGloballyPositioned {
+                onPizzaGloballyPositioned(it)
+            },
+        contentScale = ContentScale.Crop,
+        painter = painterResource(Res.drawable.plate),
+        contentDescription = ""
+    )
 }
 
 
@@ -401,7 +433,7 @@ fun MainTopBar(itemCount: MutableState<Int>) {
             fontSize = 25.sp,
             color = Pink40
         )
-        Row(Modifier.align(Alignment.BottomStart), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier, verticalAlignment = Alignment.CenterVertically) {
             Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = "", tint = Pink40)
             Text(
                 text = "Paris",
@@ -453,7 +485,10 @@ private fun CartIcon(modifier: Modifier, itemCount: MutableState<Int>) {
                     backgroundColor = Color.Red,
                     contentColor = Color.White
                 ) {
-                    Text("${itemCount.value}")
+                    Text(
+                        text = "${itemCount.value}",
+                        modifier = Modifier.testTag(MainScreenTestTags.PIZZA_COUNT.name)
+                    )
                 }
             }
         }
@@ -469,35 +504,68 @@ private fun CartIcon(modifier: Modifier, itemCount: MutableState<Int>) {
 }
 
 @Composable
-private fun AnimatedEdge(modifier: Modifier, isPizzaSelected: Boolean) {
-    val radius = remember { mutableStateOf(0F) }
-    val images = listOf(
-        Res.drawable.champinion,
-        Res.drawable.half_tomato,
-        Res.drawable.capres,
-        Res.drawable.gree_olive_leaf,
-        Res.drawable.champinion,
-        Res.drawable.half_tomato,
-        Res.drawable.capres,
-        Res.drawable.gree_olive_leaf,
-    )
-    AnimatedVisibility(modifier = modifier, visible = !isPizzaSelected, exit = fadeOut()) {
-        AnimatedCircularImages(
-            modifier = Modifier.onGloballyPositioned {
-                radius.value = it.size.width / 10f
-            },
-            images = images,
-            numberOfImages = images.size,
-            radius = radius.value,
-            isAnimated = false,
-            isSingleImage = false
+private fun AnimatedEdge(state: MainScreenUiState, modifier: Modifier) {
+
+    if (!state.isPizzaBoxVisible) {
+
+        val radius = remember { mutableStateOf(0F) }
+        val images = listOf(
+            Res.drawable.champinion,
+            Res.drawable.half_tomato,
+            Res.drawable.capres,
+            Res.drawable.gree_olive_leaf,
+            Res.drawable.champinion,
+            Res.drawable.half_tomato,
+            Res.drawable.capres,
+            Res.drawable.gree_olive_leaf,
         )
+        AnimatedVisibility(
+            modifier = modifier.clip(CircleShape)
+                .rotate(state.rotation.value)
+                .size(state.plateSize.value * PIZZA_ANIM_EDGE_SIZE_COEF),
+            visible = !state.isPizzaSelected,
+            exit = fadeOut()
+        ) {
+            AnimatedCircularImages(
+                modifier = Modifier.onGloballyPositioned {
+                    radius.value = it.size.width / 10f
+                },
+                images = images,
+                numberOfImages = images.size,
+                radius = radius.value,
+                isAnimated = false,
+                isSingleImage = false
+            )
+        }
     }
 }
 
 @Composable
-private fun AddToCartButton(modifier: Modifier) {
-    Box(modifier) {
+private fun AddToCartButton(
+    mainScreenUiState: MainScreenUiState,
+    modifier: Modifier,
+    onAddToCarClicked: () -> Unit
+) {
+    Box(modifier.size(ADD_TO_CART_BUTTON_SIZE.dp)
+        .padding(ADD_TO_CART_BUTTON_PADDING.dp)
+        .shadow(
+            2.dp,
+            shape = RoundedCornerShape(20.dp),
+            ambientColor = Orange40
+        )
+        .background(
+            brush = Brush.verticalGradient(
+                if (!mainScreenUiState.isPizzaBoxVisible && !mainScreenUiState.isPizzaBoxClosed) listOf(
+                    Yellow40, Orange40
+                ) else listOf(Yellow60, Orange60)
+            ), shape = RoundedCornerShape(20.dp)
+        )
+        .clickable(enabled = !mainScreenUiState.isPizzaBoxVisible && !mainScreenUiState.isPizzaBoxClosed) {
+            onAddToCarClicked()
+        }.testTag(MainScreenTestTags.ADD_TO_CART_BUTTON.name)
+    )
+
+    {
         Icon(
             modifier = Modifier.align(Alignment.Center),
             imageVector = Icons.Outlined.ShoppingCart,
@@ -653,10 +721,10 @@ private fun PizzaSizes() {
 }
 
 @Composable
-private fun PizzaButton(isPizzaSelected: Boolean, modifier: Modifier) {
+private fun PizzaButton(isHidden: Boolean, modifier: Modifier) {
     AnimatedVisibility(
         modifier = modifier,
-        visible = !isPizzaSelected,
+        visible = !isHidden,
         enter = fadeIn(tween(100)) + expandIn()
     ) {
         Column(
@@ -729,7 +797,6 @@ fun PizzaPager(
             currentPage = pagerState.currentPage,
             page = page
         )
-        println(" page offset $pageOffset")
         val offset = 70.dp * pageOffset
 
         // Notify about current page scroll
@@ -746,6 +813,7 @@ fun PizzaPager(
             offset = offset,
             pageOffset = pageOffset,
             scale = scale,
+            index = pagerState.currentPage,
             pizza = pizzas[page],
             size = pizzaSize,
             rotation = getPizzaItemRotationValue(
@@ -756,6 +824,7 @@ fun PizzaPager(
         ) {
             PagerUtils.currentIndex = pagerState.currentPage
             if (page == pagerState.currentPage) {
+
                 listener.onPizzaClicked(pagerState.currentPage)
             }
         }
@@ -771,15 +840,21 @@ fun PizzaPage(
     size: Dp = 240.dp,
     rotation: Float = 100 * -pageOffset,
     pizza: Pizza,
+    index: Int,
     onClickAction: () -> Unit
 ) {
+    println("index::$index")
     Image(
         contentScale = ContentScale.Crop,
         modifier = Modifier.offset(y = offset).size(size).clip(CircleShape)
-            .testTag(MainScreenTestTags.PIZZA_ITEM.name)
-            .background(Color.Transparent, shape = CircleShape).scale(scale.value).clickable {
+            .background(Color.Transparent, shape = CircleShape)
+            .scale(scale.value).clickable {
                 onClickAction()
-            }.rotate(rotation),
+            }.rotate(rotation)
+            .testTag(
+                if (pageOffset == 0f)
+                    "${MainScreenTestTags.PIZZA_ITEM.name}_${index}" else ""
+            ),
         painter = painterResource(pizza.image),
         contentDescription = ""
     )
