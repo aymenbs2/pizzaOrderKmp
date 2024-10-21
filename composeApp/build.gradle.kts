@@ -20,10 +20,9 @@ kotlin {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         instrumentedTestVariant {
             sourceSetTree.set(KotlinSourceSetTree.test)
-
             dependencies {
                 implementation(libs.androidx.ui.test.junit4.android)
-                debugImplementation(libs.androidx.ui.test.manifest)
+                debugImplementation(libs.androidx.ui.test.manifest.version)
             }
         }
 
@@ -41,17 +40,11 @@ kotlin {
     }
 
     sourceSets {
-        val commonTest by getting {
-            dependencies {
 
-                implementation(libs.kotlin.test)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.uiTest)
-                implementation(libs.kotlinx.coroutines.test.v164)
-
-// JUnit for unit testing
-                implementation(libs.junit)
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
         }
 
         androidMain.dependencies {

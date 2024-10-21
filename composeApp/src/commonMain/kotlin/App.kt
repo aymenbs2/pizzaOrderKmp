@@ -11,9 +11,8 @@ import main.ui.viewModel.MainScreenViewModel
 @Preview
 fun App() {
     MaterialTheme {
-        println("ddd no density=${16.dp.value}")
         val viewModel = MainScreenViewModel()
-        viewModel.setCurrentPizza( MockPizzaData.pizzas.first())
+        viewModel.setCurrentPizza(MockPizzaData.pizzas.first())
         MainScreen(viewModel)
     }
 }

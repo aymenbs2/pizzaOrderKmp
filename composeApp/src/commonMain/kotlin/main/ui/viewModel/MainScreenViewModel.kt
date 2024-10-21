@@ -27,10 +27,10 @@ class MainScreenViewModel : ViewModel() {
 
     //layout values
     private var _pizzaLayoutCoordinates = MutableStateFlow(Any())
-    private val _plateSize = MutableStateFlow<State<Dp>>(mutableStateOf(0.dp))
-    private val _cornerRadiusBg = MutableStateFlow<State<Dp>>(mutableStateOf(0.dp))
-    private val _selectedRotation = MutableStateFlow<State<Float>>(mutableStateOf(0f))
-    private val _rotation = MutableStateFlow<State<Float>>(mutableStateOf(0F))
+    private val _plateSize = MutableStateFlow(0.dp)
+    private val _cornerRadiusBg = MutableStateFlow(0.dp)
+    private val _selectedRotation = MutableStateFlow(0f)
+    private val _rotation = MutableStateFlow(0F)
 
     var pizzaComposition: PizzaComposition? = null
 
@@ -136,7 +136,7 @@ class MainScreenViewModel : ViewModel() {
             pizzaLayoutCoordinates = _pizzaLayoutCoordinates.value,
             plateSize = _plateSize.value,
             cornerRadiusBg = _cornerRadiusBg.value,
-            isDisplaySupplementsAllowed =  !_isPizzaBoxVisible.value,
+            isDisplaySupplementsAllowed = !_isPizzaBoxVisible.value,
             selectedRotation = _selectedRotation.value,
             rotation = _rotation.value,
         )
@@ -144,21 +144,21 @@ class MainScreenViewModel : ViewModel() {
 
     fun setContainerSize(containerSize: State<Dp>) {
         viewModelScope.launch {
-            _plateSize.value = containerSize
+            _plateSize.value = containerSize.value
             updateUiState()
         }
     }
 
     fun setCornerRadiusBg(cornerRadius: State<Dp>) {
         viewModelScope.launch {
-            _cornerRadiusBg.value = cornerRadius
+            _cornerRadiusBg.value = cornerRadius.value
             updateUiState()
         }
     }
 
     fun setSelectedRotation(selectRotation: State<Float>) {
         viewModelScope.launch {
-            _selectedRotation.value = selectRotation
+            _selectedRotation.value = selectRotation.value
             updateUiState()
         }
     }
@@ -166,7 +166,7 @@ class MainScreenViewModel : ViewModel() {
 
     fun setRotation(rotation: State<Float>) {
         viewModelScope.launch {
-            _rotation.value = rotation
+            _rotation.value = rotation.value
             updateUiState()
         }
     }
