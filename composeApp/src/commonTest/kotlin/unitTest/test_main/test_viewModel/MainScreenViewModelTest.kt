@@ -167,10 +167,10 @@ class MainScreenViewModelTest {
         // Run the pending coroutines
         advanceUntilIdle()
         //Then
-        assertEquals(containerSize.value, viewModel.uiState.value.plateSize.value)
-        assertEquals(cornerRadiusBg.value, viewModel.uiState.value.cornerRadiusBg.value)
-        assertEquals(selectedRotation.value, viewModel.uiState.value.selectedRotation.value)
-        assertEquals(rotation.value, viewModel.uiState.value.rotation.value)
+        assertEquals(containerSize.value, viewModel.uiState.value.plateSize)
+        assertEquals(cornerRadiusBg.value, viewModel.uiState.value.cornerRadiusBg)
+        assertEquals(selectedRotation.value, viewModel.uiState.value.selectedRotation)
+        assertEquals(rotation.value, viewModel.uiState.value.rotation)
     }
 
 }

@@ -1,6 +1,7 @@
 package automated
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.runComposeUiTest
 import automated.pages.MainScreenPage
 import main.ui.mainScreen.view.MainScreen
 import main.ui.viewModel.MainScreenViewModel

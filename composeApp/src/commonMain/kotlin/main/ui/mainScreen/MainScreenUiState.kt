@@ -13,8 +13,8 @@ data class MainScreenUiState(
     val currentPizza: Pizza,
     val currentSupplements: List<PizzaSupplement>,
     val pizzaLayoutCoordinates: Any? = null,
-    val plateSize: State<Dp>,
-    val selectedRotation:  State<Float>,
-    val rotation:  State<Float>,
-    val cornerRadiusBg: State<Dp>,
+    val plateSize: Dp,
+    val selectedRotation: Float,
+    val rotation: Float,
+    val cornerRadiusBg: Dp,
 )
