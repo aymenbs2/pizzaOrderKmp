@@ -47,8 +47,6 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -64,7 +62,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -104,7 +101,7 @@ import main.ui.theme.Yellow40
 import main.ui.theme.Yellow50
 import main.ui.theme.Yellow60
 import main.ui.theme.Yellow70
-import main.ui.viewModel.MainScreenViewModel
+import main.ui.mainScreen.viewModel.MainScreenViewModel
 
 enum class MainScreenTestTags {
     PAGER,
@@ -133,6 +130,7 @@ const val PIZZA_DETAILS_PADDING = ADD_TO_CART_BUTTON_SIZE + ADD_TO_CART_BUTTON_P
         PIZZA_ADDITION_ITEM_SIZE + ADDITION_INSTRUCTION_TEXT_PADDING +
         ADDITION_INSTRUCTION_TEXT_SIZE + 20
 const val PIZZA_DETAILS_PADDING_ON_PAGER = ADD_TO_CART_BUTTON_SIZE + ADD_TO_CART_BUTTON_PADDING + 20
+var recompostiotionCount = 0
 
 @Composable
 fun MainScreen(mainScreenViewModel: MainScreenViewModel) {
@@ -243,16 +241,19 @@ private fun MainContent(
     onSupplementDragged: (pizzaSupplement: PizzaSupplement) -> Unit,
     onPizzaBoxDisappear: () -> Unit,
 ) {
+    val modifier = remember {
+        Modifier.background(brush = Brush.verticalGradient(listOf(Yellow60, Yellow50)))
+            .fillMaxSize()
+    }
+
     Column(
-        modifier = Modifier.background(brush = Brush.verticalGradient(listOf(Yellow60, Yellow50)))
-            .fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PizzaButton(isHidden = mainScreenUiState.isPizzaSelected, modifier = Modifier)
+        PizzaButton(isHidden = mainScreenUiState.isPizzaSelected)
         Box(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = modifier,
         ) {
             RoundBackground(
                 mainScreenUiState = mainScreenUiState,
@@ -436,8 +437,10 @@ fun MainTopBar(pizzaCartCount: () -> Int) {
             fontSize = 25.sp,
             color = Pink40
         )
-        Row(Modifier.align(Alignment.BottomStart),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier.align(Alignment.BottomStart),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = "", tint = Pink40)
             Text(
                 text = "Paris",
@@ -726,7 +729,7 @@ private fun PizzaSizes() {
 }
 
 @Composable
-private fun PizzaButton(isHidden: Boolean, modifier: Modifier) {
+private fun PizzaButton(isHidden: Boolean, modifier: Modifier = Modifier) {
     AnimatedVisibility(
         modifier = modifier,
         visible = !isHidden,
@@ -848,7 +851,6 @@ fun PizzaPage(
     index: Int,
     onClickAction: () -> Unit
 ) {
-    println("index::$index")
     Image(
         contentScale = ContentScale.Crop,
         modifier = Modifier.offset(y = offset).size(size).clip(CircleShape)
