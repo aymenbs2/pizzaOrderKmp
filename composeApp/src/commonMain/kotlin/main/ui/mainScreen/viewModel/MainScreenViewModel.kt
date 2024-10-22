@@ -1,7 +1,6 @@
-package main.ui.viewModel
+package main.ui.mainScreen.viewModel
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
